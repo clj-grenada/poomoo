@@ -1,7 +1,8 @@
 (ns poomoo.bars
   "Defines a few Bar types useful for documenting concrete things."
   {:grenada.cmeta/bars {:poomoo.bars/markup-all :common-mark}}
-  (:require [grenada.things.def :as things.def]))
+  (:require [grenada.bars :as b]
+            [grenada.things.def :as things.def]))
 
 (def docs-def
   "Definition of the Bar type `::docs`.
@@ -143,7 +144,51 @@
      :bar-prereqs-pred #(t/above-incl? ::t/namespace (t/pick-main-aspect %))
      :valid-pred markup-lang-valid?}))
 
+(def markup-def
+  "Definition of the Bar type `::markup`.
+
+  ## Model
+
+  This Bar is the same as `::docs-markup` except that it specifies the markup
+  language used for **Clojure doc strings** and `:grenada.bars/doc` Bars instead
+  of `:poomoo.bars/docs` Bars. See the definition of `::docs-markup` for
+  details.
+
+  ## Prerequisites
+
+  Can only be attached to Finds and Namespace, which have to already have a
+  `::grenada.bars/doc` Bar.
+
+  ## Remarks
+
+  If you want to specify the markup language for many Things at once, use
+  `::markup-all`."
+  (things.def/map->bar-type
+    {:name ::markup
+     :aspect-prereqs-pred (safe-get-in b/def-for-bar-type
+                                       [::b/doc :aspect-prereqs-pred])
+     :bar-prereqs-pred #(contains? % ::b/doc)
+     :valid-pred markup-lang-valid?}))
+
+(def markup-all-def
+  "Definition of the Bar type `::markup-all`.
+
+  ## Model
+
+  This Bar is to `::markup` the same as `::docs-markup-all` is to `::markup`.
+  See their definitions for more information.
+
+  ## Prerequisites
+
+  Can only be attached to Things above and including the Namespace level."
+  (things.def/map->bar-type
+    {:name ::markup-all
+     :aspect-prereqs-pred #(t/above-incl? ::t/namespace (t/pick-main-aspect %))
+     :valid-pred markup-lang-valid?}))
+
 (def def-for-bar-type
   (things.def/map-from-defs #{docs-def
                               docs-markup-def
-                              docs-markup-all-def}))
+                              docs-markup-all-def
+                              markup-def
+                              markup-all-def}))
