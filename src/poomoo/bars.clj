@@ -1,4 +1,6 @@
 (ns poomoo.bars
+  "Defines a few Bar types useful for documenting concrete things."
+  {:grenada.cmeta/bars {:poomoo.bars/markup-all :common-mark}}
   (:require [grenada.things.def :as things.def]))
 
 (def docs-def
@@ -74,5 +76,74 @@
     {:name ::docs
      :schema {s/Str s/Str}}))
 
+(defn markup-lang-valid? [bar]
+  (contains? #{:common-mark :github-mark :html :plain} bar))
+
+(def docs-markup-def
+  "Definition of the Bar type `::docs-markup`.
+
+  ## Model
+
+  `::docs-markup` Bars specify the markup language used for the `::docs` Bar of
+  a Thing. Other Bars and **consumers dealing** with doc strings should take
+  this into account.
+
+  Currently the following markup **languages** are **allowed**:
+
+   - [CommonMark](http://commonmark.org/)
+   - [GitHub-flavoured
+     Markdown](https://help.github.com/articles/github-flavored-markdown/)
+   - [HTML](http://www.w3.org/TR/html/)
+   - [plain text](http://www.unicode.org/versions/Unicode6.1.0/ch02.pdf)
+
+  This Bar type does not **guarantee** that the documentation processor at the
+  other end will be able to handle any of these formats properly.
+
+  ## Prerequisites
+
+  Can be attached to Things with arbitrary Aspects. Can only be attached to
+  Things that already have a `::docs` Bar.
+
+  ## Remarks
+
+  Do not use Bars of this type for specifying the markup language of **doc
+  strings** and `:grenada.bars/doc` Bars. That's what `::markup` is for.
+
+  If you want to specify the markup language for a **whole bunch of Things** at
+  once, you can use `:docs-markup-all`."
+  (things.def/map->bar-type
+    {:name ::docs-markup
+     :bar-prereqs-pred #(contains? % {::docs})
+     :valid-pred markup-lang-valid?}))
+
+(def docs-markup-all-def
+  "Definition of the Bar type `::docs-markup-all`.
+
+  ## Model
+
+  Attaching a Bar of type `:poomoo.bars/docs-markup-all` to a Thing T has the
+  same meaning as attaching a Bar of type `:poomoo.bars/docs-markup-all` to T
+  and those of its descendants that don't have a `:poomoo.bars/docs-markup` or
+  `:poomoo.bars/docs-markup-all` Bar already. For details, see the definition of
+  `:poomoo.bars/docs-markup`.
+
+  Note: this means that if you're building a tool that has to do with
+  `:poomoo.bars` Bars, you also have to **look at the ancestors** of Things
+  whether they say something about the markup.
+
+  ## Prerequisites
+
+  Can only be attached to Things above and including the Namespace level.
+
+  ## Remarks
+
+  See the remarks on the definition of `:poomoo.bars/docs-markup`."
+  (things.def/map->bar-type
+    {:name ::docs-markup-all
+     :bar-prereqs-pred #(t/above-incl? ::t/namespace (t/pick-main-aspect %))
+     :valid-pred markup-lang-valid?}))
+
 (def def-for-bar-type
-  (things.def/map-from-defs #{docs-def}))
+  (things.def/map-from-defs #{docs-def
+                              docs-markup-def
+                              docs-markup-all-def}))
