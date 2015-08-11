@@ -9,12 +9,18 @@
 
 ;;;; Helpers for parsing
 
-(defn- parser-from-resources [& rs]
-  (->> rs
-       (map io/resource)
-       (map slurp)
-       (string/join "\n") ; https://github.com/Engelberg/instaparse#string-to-combinator-conversion
-       (<- (insta/parser :output-format :enlive))))
+(defn- conveniently-parse [s & rs]
+  (let [parse-res
+        (->> rs
+             (map io/resource)
+             (map slurp)
+             (string/join "\n") ; https://github.com/Engelberg/instaparse#string-to-combinator-conversion
+             (<- (insta/parser :output-format :enlive)
+                 (insta/parse s)))]
+    (when (insta/failure? parse-res)
+      (throw (IllegalArgumentException.
+               (str "Couldn't parse string " s ": " (pr-str parse-res)))))
+    parse-res))
 
 (defn get-unit [parse-res kw]
   (-> parse-res
@@ -31,12 +37,15 @@
 
 ;;;; Public API
 
-(defn parse-ext-doc-string [s]
-  (let [parse-res (-> (parser-from-resources "doc_file.bnf")
-                      (insta/parse s))]
-    (when (insta/failure? parse-res)
-      (throw (IllegalArgumentException.
-               (str "Couldn't parse string " s ": " (pr-str parse-res)))))
+(defn parse-ext-doc-string
+  "Takes the contents of an external documentation file and turns them into a
+  map:
+
+    {:coords  <coordinates of the Thing the documentation is for>
+     :calling <(optional) how to call the concrete thing>
+     :docs    <(may be empty) the documentation you wrote>"
+  [s]
+  (let [parse-res (conveniently-parse s "doc_file.bnf")]
     (plumbing/assoc-when
       {:coords (-> parse-res
                    (safe-get-unit :coordinates)
