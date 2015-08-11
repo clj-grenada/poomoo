@@ -9,11 +9,13 @@ chunk        = expressions special-comments?
 expressions       = expression-line+
 <expression-line> = !special-comments nonempty-text-line
 
-<special-comments> = input? stderr? stdout? result
-input              = <#"(?xms) ^ \h* ;+ \h+ <  \h+"> sc-rest
-stderr             = <#"(?xms) ^ \h* ;+ \h+ >> \h+"> sc-rest
-stdout             = <#"(?xms) ^ \h* ;+ \h+ >  \h+"> sc-rest
-result             = <#"(?xms) ^ \h* ;+ \h+ => \h+"> sc-rest
+<special-comments> = input? stderr? stdout? (result | no-eval)
+input              = <#"(?xms) ^ \h* ;+ \h+ <      \h+"> sc-rest
+stderr             = <#"(?xms) ^ \h* ;+ \h+ >>     \h+"> sc-rest
+stdout             = <#"(?xms) ^ \h* ;+ \h+ >      \h+"> sc-rest
+result             = <#"(?xms) ^ \h* ;+ \h+ =>     \h+"> sc-rest
+no-eval            = <#"(?xms) ^ \h* ;+ \h+ [^>=]> \h+"> sc-rest
+    (* This might be extended to special meaning checker. *)
 <comment-line>     = !(input | stderr | stdout | result) 
                      <#"(?xms) ^ \h* ;+ \h+"> text <linebreak>
 <sc-rest>          = text <linebreak> comment-line*

@@ -69,12 +69,14 @@
      :input       <(optional) string that is read from STDIN>
      :stderr      <(optional) string that is printed on STDERR>
      :stdout      <(optional> string that is printed on STDOUT>
-     :result      <(optional) result of evaluating the :expressions>}"
+     :result      <(optional) result of evaluating the :expressions>
+     :no-eval     <(optional) indicates that the :expressions shouldn't be
+                   evaluated>}"
   [s]
   (let [parse-res (conveniently-parse s "code_examples.bnf")
         chunks (enlive/select parse-res [:chunk])]
     (->> (enlive/at parse-res
-                    [:chunk #{:expressions :input :stderr :stdout :result}]
+                    [:chunk #{:expressions :input :stderr :stdout :result :no-eval}]
                     (fn [node] (update node :content #(string/join "\n" %))))
          (map (fn [achunk]
                 (into {} (map lift-enlive-node
