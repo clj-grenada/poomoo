@@ -34,6 +34,9 @@
     (throw (IllegalArgumentException.
              (str "Parse result " parse-res " doesn't contain unit: " kw)))))
 
+(defn lift-enlive-node [{:keys [tag content]}]
+  [tag content])
+
 
 ;;;; Public API
 
@@ -58,3 +61,21 @@
                    first
                    (as-> x (str "(" x ")"))
                    edn/read-string))))
+
+(defn parse-string-with-example
+  "Given a string with code examples, returns a sequence of maps:
+
+    {:expressions <expressions that are evaluated>
+     :input       <(optional) string that is read from STDIN>
+     :stderr      <(optional) string that is printed on STDERR>
+     :stdout      <(optional> string that is printed on STDOUT>
+     :result      <(optional) result of evaluating the :expressions>}"
+  [s]
+  (let [parse-res (conveniently-parse s "code_examples.bnf")
+        chunks (enlive/select parse-res [:chunk])]
+    (->> (enlive/at parse-res
+                    [:chunk #{:expressions :input :stderr :stdout :result}]
+                    (fn [node] (update node :content #(string/join "\n" %))))
+         (map (fn [achunk]
+                (into {} (map lift-enlive-node
+                              (safe-get achunk :content))))))))
