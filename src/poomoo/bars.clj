@@ -1,8 +1,12 @@
 (ns poomoo.bars
   "Defines a few Bar types useful for documenting concrete things."
   {:grenada.cmeta/bars {:poomoo.bars/markup-all :common-mark}}
-  (:require [grenada.bars :as b]
-            [grenada.things.def :as things.def]))
+  (:require [grenada
+             [bars :as b]
+             [things :as t]]
+            [grenada.things.def :as things.def]
+            [plumbing.core :refer [safe-get safe-get-in]]
+            [schema.core :as s]))
 
 (def docs-def
   "Definition of the Bar type `::docs`.
@@ -114,7 +118,7 @@
   once, you can use `:docs-markup-all`."
   (things.def/map->bar-type
     {:name ::docs-markup
-     :bar-prereqs-pred #(contains? % {::docs})
+     :bar-prereqs-pred #(contains? % ::docs)
      :valid-pred markup-lang-valid?}))
 
 (def docs-markup-all-def
