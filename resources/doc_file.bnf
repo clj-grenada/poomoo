@@ -1,0 +1,11 @@
+<doc> = coordinates <empty-line> (calling <empty-line>)? contents
+
+coordinates = nonempty-text-line
+calling     = <"Calling: "> text <linebreak>
+contents    = !calling text-line*
+
+<text-line>          = #"(?xms) ^ .*? $" <linebreak>
+<nonempty-text-line> = !empty-line text-line
+empty-line           = #"(?xms) ^$" linebreak
+<text>               = #"(?xms) .*? $"
+linebreak            = #"(?xms) \R"
