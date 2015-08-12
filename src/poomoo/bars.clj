@@ -84,6 +84,9 @@
 (defn markup-lang-valid? [bar]
   (contains? #{:common-mark :github-mark :html :plain} bar))
 
+;; TODO: This doesn't work. Different entries in one ::docs Bar might use
+;;       different markup languages. We have to enable per-entry specification
+;;       somehow. (RM 2015-08-12)
 (def docs-markup-def
   "Definition of the Bar type `::docs-markup`.
 
