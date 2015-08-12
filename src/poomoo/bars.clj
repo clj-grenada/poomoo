@@ -145,7 +145,7 @@
   See the remarks on the definition of `:poomoo.bars/docs-markup`."
   (things.def/map->bar-type
     {:name ::docs-markup-all
-     :bar-prereqs-pred #(t/above-incl? ::t/namespace (t/pick-main-aspect %))
+     :aspect-prereqs-pred #(t/above-incl? ::t/namespace (t/pick-main-aspect %))
      :valid-pred markup-lang-valid?}))
 
 (def markup-def
