@@ -1,4 +1,4 @@
-(defproject org.clj-grenada/poomoo "0.1.0-SNAPSHOT"
+(defproject org.clj-grenada/poomoo "1.0.0-rc.1"
   :description "A collection of Bars and tools for Clojure Grenada Things"
   :url "https://github.com/clj-grenada/poomoo"
   :license {:name "MIT License"
