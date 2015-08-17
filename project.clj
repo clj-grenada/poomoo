@@ -8,4 +8,10 @@
                  [instaparse "1.4.1"]
                  [org.clj-grenada/lib-grenada "1.0.0-rc.1"]
                  [prismatic/plumbing "0.4.3"]
-                 [prismatic/schema "0.4.0"]])
+                 [prismatic/schema "0.4.0"]]
+
+  :codox {:sources ["src"]
+          :output-dir "api-docs"
+          :src-dir-uri "https://github.com/clj-grenada/poomoo/blob/master/"
+          :homepage-uri "https://github.com/clj-grenada/poomoo/tree/master/"
+          :src-linenum-anchor-prefix "L"})
