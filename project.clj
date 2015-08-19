@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [enlive "1.1.6"]
                  [instaparse "1.4.1"]
-                 [org.clj-grenada/lib-grenada "1.0.0-rc.1"]
+                 [org.clj-grenada/lib-grenada "1.0.0-rc.2"]
                  [prismatic/plumbing "0.4.3"]
                  [prismatic/schema "0.4.0"]]
 
