@@ -1,4 +1,4 @@
-(defproject org.clj-grenada/poomoo "1.0.0-rc.2"
+(defproject org.clj-grenada/poomoo "1.0.0-rc.3"
   :description "A collection of Bars and tools for Clojure Grenada Things"
   :url "https://github.com/clj-grenada/poomoo"
   :license {:name "MIT License"
@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [enlive "1.1.6"]
                  [instaparse "1.4.1"]
-                 [org.clj-grenada/lib-grenada "1.0.0-rc.2"]
+                 [org.clj-grenada/lib-grenada "1.0.0-rc.4"]
                  [prismatic/plumbing "0.4.3"]
                  [prismatic/schema "0.4.0"]]
 
