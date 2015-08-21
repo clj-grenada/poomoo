@@ -9,7 +9,11 @@
 
 ;;;; Helpers for parsing
 
-(defn- conveniently-parse [s & rs]
+(defn- conveniently-parse
+  "Parses S with the grammars read from RS.
+
+  Throws an exception on parse errors. Output is in Enlive format."
+  [s & rs]
   (let [parse-res
         (->> rs
              (map io/resource)
@@ -22,25 +26,33 @@
                (str "Couldn't parse string " s ": " (pr-str parse-res)))))
     parse-res))
 
-(defn get-unit [parse-res kw]
+(defn- get-unit
+  "Runs enlive/select on PARSE-RES and returns the content of the first node
+  that matches [KW]."
+  [parse-res kw]
   (-> parse-res
       (enlive/select [kw])
       first
       (get :content)))
 
-(defn safe-get-unit [parse-res kw]
+(defn- safe-get-unit
+  "Like get-unit, but throws an exception if there is no node matching [KW]."
+  [parse-res kw]
   (if-let [unit (first (enlive/select parse-res [kw]))]
     (safe-get unit :content)
     (throw (IllegalArgumentException.
              (str "Parse result " parse-res " doesn't contain unit: " kw)))))
 
-(defn lift-enlive-node [{:keys [tag content]}]
+(defn- lift-enlive-node
+  "Enlive nodes are maps with the keys :tag and :content. Returns a vector (to
+  be made into a map entry) [tag content]."
+  [{:keys [tag content]}]
   [tag content])
 
 
 ;;;; Public API
 
-(defn parse-ext-doc-string
+(defn- parse-ext-doc-string
   "Takes the contents of an external documentation file and turns them into a
   map:
 
